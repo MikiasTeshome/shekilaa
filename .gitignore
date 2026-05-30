@@ -1,0 +1,8 @@
+# Ignore environment file
+.env
+
+# Node and Next.js defaults
+node_modules/
+.next/
+dist/
+build/
