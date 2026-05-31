@@ -1,0 +1,76 @@
+[
+  {
+    "id": 1,
+    "name": {
+      "am": "የተፈጨ በርበሬ",
+      "de": "Ground Berbere",
+      "en": "Ground Berbere"
+    },
+    "nameKey": "product_berbere",
+    "price": 450,
+    "weight": "500ግ",
+    "unit": "1ኪ.ግ",
+    "img": "/images/berbere.png",
+    "tagKey": "product_popular",
+    "category": "spices"
+  },
+  {
+    "id": 2,
+    "name": {
+      "am": "የተፈጨ ሚጥሚጣ",
+      "de": "Ground Mitmita",
+      "en": "Ground Mitmita"
+    },
+    "nameKey": "product_mitmita",
+    "price": 550,
+    "weight": "500ግ",
+    "unit": "1ኪ.ግ",
+    "img": "/images/mitmita.png",
+    "tagKey": "",
+    "category": "spices"
+  },
+  {
+    "id": 3,
+    "name": {
+      "am": "ሸሮ",
+      "de": "Shiro Powder",
+      "en": "Shiro Powder"
+    },
+    "nameKey": "product_shiro",
+    "price": 350,
+    "weight": "",
+    "unit": "1ኪ.ግ",
+    "img": "/images/shiro.png",
+    "tagKey": "",
+    "category": "traditional"
+  },
+  {
+    "id": 4,
+    "name": {
+      "am": "በሶ",
+      "de": "Beso Flour",
+      "en": "Beso Flour"
+    },
+    "nameKey": "product_beso",
+    "price": 300,
+    "weight": "",
+    "unit": "1ኪ.ግ",
+    "img": "/images/beso.png",
+    "tagKey": "product_new",
+    "category": "grains"
+  },
+  {
+    "name": {
+      "am": "የተፈጨ በርበሬ ተወዳጅ",
+      "de": "Special Berbere",
+      "en": "Special Berbere"
+    },
+    "price": 480,
+    "weight": "500g",
+    "unit": "1kg",
+    "img": "/images/berbere.png",
+    "tagKey": "",
+    "category": "spices",
+    "id": 1780248310477
+  }
+]

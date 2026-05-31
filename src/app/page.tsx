@@ -24,20 +24,122 @@ export default function Page() {
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  const products = [
-    { nameKey: 'product_berbere', price: 450, weight: '500ግ', unit: '1ኪ.ግ', img: '/images/berbere.png', tagKey: 'product_popular' },
-    { nameKey: 'product_mitmita', price: 550, weight: '500ግ', unit: '1ኪ.ግ', img: '/images/mitmita.png', tagKey: '' },
-    { nameKey: 'product_shiro', price: 350, weight: '', unit: '1ኪ.ግ', img: '/images/shiro.png', tagKey: '' },
-    { nameKey: 'product_beso', price: 300, weight: '', unit: '1ኪ.ግ', img: '/images/beso.png', tagKey: 'product_new' },
-  ];
+  const [products, setProducts] = useState([] as any[]);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [cart, setCart] = useState<any[]>([]);
+  const [wishlist, setWishlist] = useState<any[]>([]);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [showCartDrawer, setShowCartDrawer] = useState(false);
+  const productGridRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Fetch products from API, fallback to static seed if empty
+    fetch('/api/products')
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data) && data.length) {
+          setProducts(data);
+        } else {
+          // Fallback static list
+          setProducts([
+            { id: 1, nameKey: 'product_berbere', price: 450, weight: '500ግ', unit: '1ኪ.ግ', img: '/images/berbere.png', tagKey: 'product_popular', category: 'spices' },
+            { id: 2, nameKey: 'product_mitmita', price: 550, weight: '500ግ', unit: '1ኪ.ግ', img: '/images/mitmita.png', tagKey: '', category: 'spices' },
+            { id: 3, nameKey: 'product_shiro', price: 350, weight: '', unit: '1ኪ.ግ', img: '/images/shiro.png', tagKey: '', category: 'traditional' },
+            { id: 4, nameKey: 'product_beso', price: 300, weight: '', unit: '1ኪ.ግ', img: '/images/beso.png', tagKey: 'product_new', category: 'grains' },
+          ]);
+        }
+      })
+      .catch(() => {
+        setProducts([
+          { id: 1, nameKey: 'product_berbere', price: 450, weight: '500ግ', unit: '1ኪ.ግ', img: '/images/berbere.png', tagKey: 'product_popular', category: 'spices' },
+          { id: 2, nameKey: 'product_mitmita', price: 550, weight: '500ግ', unit: '1ኪ.ግ', img: '/images/mitmita.png', tagKey: '', category: 'spices' },
+          { id: 3, nameKey: 'product_shiro', price: 350, weight: '', unit: '1ኪ.ግ', img: '/images/shiro.png', tagKey: '', category: 'traditional' },
+          { id: 4, nameKey: 'product_beso', price: 300, weight: '', unit: '1ኪ.ግ', img: '/images/beso.png', tagKey: 'product_new', category: 'grains' },
+        ]);
+      });
+  }, []);
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => {
+      setToastMessage((current) => current === msg ? null : current);
+    }, 3000);
+  };
+
+  const addToCart = (product: any) => {
+    setCart((prev) => {
+      const existing = prev.find((item) => item.id === product.id);
+      if (existing) {
+        return prev.map((item) =>
+          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+        );
+      }
+      return [...prev, { ...product, quantity: 1 }];
+    });
+    showToast(`${product.name?.[locale] || t(product.nameKey)} added to cart!`);
+  };
+
+  const updateCartQty = (id: any, delta: number) => {
+    setCart((prev) =>
+      prev
+        .map((item) => {
+          if (item.id === id) {
+            const newQty = item.quantity + delta;
+            return { ...item, quantity: newQty };
+          }
+          return item;
+        })
+        .filter((item) => item.quantity > 0)
+    );
+  };
+
+  const removeFromCart = (id: any) => {
+    setCart((prev) => prev.filter((item) => item.id !== id));
+  };
+
+  const toggleWishlist = (product: any) => {
+    const isInWishlist = wishlist.some((item) => item.id === product.id);
+    if (isInWishlist) {
+      setWishlist((prev) => prev.filter((item) => item.id !== product.id));
+      showToast(`Removed from Wishlist`);
+    } else {
+      setWishlist((prev) => [...prev, product]);
+      showToast(`Added to Wishlist! ❤️`);
+    }
+  };
+
+  const scrollLeft = () => {
+    if (productGridRef.current) {
+      productGridRef.current.scrollBy({ left: -300, behavior: 'smooth' });
+    }
+  };
+
+  const scrollRight = () => {
+    if (productGridRef.current) {
+      productGridRef.current.scrollBy({ left: 300, behavior: 'smooth' });
+    }
+  };
 
   const categories = [
-    { icon: '🌶️', labelKey: 'cat_spices' },
-    { icon: '🫘', labelKey: 'cat_grains' },
-    { icon: '🍲', labelKey: 'cat_traditional' },
-    { icon: '🫖', labelKey: 'cat_drinks' },
-    { icon: '🧂', labelKey: 'cat_other' },
+    { icon: '🌶️', labelKey: 'cat_spices', key: 'spices' },
+    { icon: '🫘', labelKey: 'cat_grains', key: 'grains' },
+    { icon: '🍲', labelKey: 'cat_traditional', key: 'traditional' },
+    { icon: '🫖', labelKey: 'cat_drinks', key: 'drinks' },
+    { icon: '🧂', labelKey: 'cat_other', key: 'other' },
   ];
+
+  const filteredProducts = selectedCategory
+    ? products.filter((p) => p.category === selectedCategory)
+    : products;
+
+  const searchedProducts = filteredProducts.filter((p) => {
+    const name = (p.name?.[locale] || t(p.nameKey) || '').toLowerCase();
+    return name.includes(searchQuery.toLowerCase());
+  });
+
 
   const featureKeys = [
     { icon: '✅', titleKey: 'feat_natural_title', descKey: 'feat_natural_desc' },
@@ -114,17 +216,17 @@ export default function Page() {
               </div>
             </div>
 
-            <button aria-label="Search">
+            <button aria-label="Search" onClick={() => setSearchOpen(true)}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
             </button>
-            <button aria-label="Account">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            </button>
-            <button aria-label="Cart" style={{ position: 'relative' }}>
+            <a href="/admin" aria-label="Account" style={{ display: 'flex', alignItems: 'center' }}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="22" height="22"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </a>
+            <button aria-label="Cart" style={{ position: 'relative' }} onClick={() => setShowCartDrawer(true)}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-              <span className="cart-badge">0</span>
+              <span className="cart-badge">{cart.reduce((sum, item) => sum + item.quantity, 0)}</span>
             </button>
-            <button className="mobile-toggle" aria-label="Menu">
+            <button className="mobile-toggle" aria-label="Menu" onClick={() => setMenuOpen(true)}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
             </button>
           </div>
@@ -150,7 +252,7 @@ export default function Page() {
             <p>{t('hero_desc')}</p>
             <div className="hero-buttons">
               <a href="#products" className="btn-primary">{t('hero_shop')}</a>
-              <a href="#about" className="btn-outline">{t('hero_browse')}</a>
+              <a href="/admin" className="btn-outline">⚙️ Store Admin</a>
             </div>
           </div>
         </div>
@@ -161,12 +263,17 @@ export default function Page() {
         <div className="container">
           <div className="cat-grid">
             {categories.map((cat) => (
-              <a key={cat.labelKey} className="cat-item" href="#products">
+              <button
+                key={cat.labelKey}
+                className={`cat-item${selectedCategory === cat.key ? ' active' : ''}`}
+                onClick={() => setSelectedCategory(selectedCategory === cat.key ? null : cat.key)}
+                style={{ background: 'none', border: 'none', fontFamily: 'inherit', color: 'inherit' }}
+              >
                 <div className="cat-icon">{cat.icon}</div>
                 <span className="cat-label">{t(cat.labelKey).split('\n').map((line, i) => (
                   <span key={i}>{line}{i === 0 && <br />}</span>
                 ))}</span>
-              </a>
+              </button>
             ))}
           </div>
         </div>
@@ -176,28 +283,39 @@ export default function Page() {
       <section className="products" id="products">
         <div className="container">
           <div className="section-header">
-            <h2>{t('products_title')}</h2>
+            <h2>
+              {t('products_title')}
+              {selectedCategory && (
+                <span style={{ fontSize: '14px', color: 'var(--gold-500)', marginLeft: '12px', fontWeight: '500' }}>
+                  ({categories.find((c) => c.key === selectedCategory)?.icon} {t(`cat_${selectedCategory}`)})
+                </span>
+              )}
+            </h2>
             <div className="section-nav">
-              <button aria-label="Previous">
+              <button aria-label="Previous" onClick={scrollLeft}>
                 <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 18l-6-6 6-6"/></svg>
               </button>
-              <button aria-label="Next">
+              <button aria-label="Next" onClick={scrollRight}>
                 <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 18l6-6-6-6"/></svg>
               </button>
             </div>
           </div>
-          <div className="product-grid">
-            {products.map((p) => (
-              <div className="product-card" key={p.nameKey}>
+          <div className="product-grid" ref={productGridRef}>
+            {filteredProducts.map((p) => (
+              <div className="product-card" key={p.id}>
                 <div className="product-img">
-                  <img src={p.img} alt={t(p.nameKey)} />
+                  <img src={p.img} alt={p.name?.[locale] || t(p.nameKey)} />
                   {p.tagKey && <span className="product-tag">{t(p.tagKey)}</span>}
-                  <button className="product-wish" aria-label="Add to wishlist">
-                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                  <button
+                    className={`product-wish${wishlist.some((item) => item.id === p.id) ? ' active' : ''}`}
+                    onClick={() => toggleWishlist(p)}
+                    aria-label="Add to wishlist"
+                  >
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill={wishlist.some((item) => item.id === p.id) ? "var(--red-600)" : "none"} stroke="currentColor" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
                   </button>
                 </div>
                 <div className="product-info">
-                  <h3 className="product-name">{t(p.nameKey)}</h3>
+                  <h3 className="product-name">{p.name?.[locale] || t(p.nameKey)}</h3>
                   <div className="product-weight">
                     <span>{p.weight}</span>
                     <span>{p.unit}</span>
@@ -206,7 +324,7 @@ export default function Page() {
                     <div className="product-price">
                       {p.price} <span>{t('product_currency')}</span>
                     </div>
-                    <button className="btn-cart">
+                    <button className="btn-cart" onClick={() => addToCart(p)}>
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
                       {t('product_cart')}
                     </button>
@@ -214,7 +332,13 @@ export default function Page() {
                 </div>
               </div>
             ))}
+            {filteredProducts.length === 0 && (
+              <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '40px', color: 'var(--gray-500)' }}>
+                No products found in this category.
+              </div>
+            )}
           </div>
+
         </div>
       </section>
 
@@ -344,6 +468,134 @@ export default function Page() {
           </div>
         </div>
       </footer>
+
+      {/* ─── SEARCH OVERLAY ─── */}
+      {searchOpen && (
+        <div className="search-overlay fade-in">
+          <div className="search-overlay-backdrop" onClick={() => setSearchOpen(false)} />
+          <div className="search-overlay-content">
+            <div className="search-header">
+              <input
+                type="text"
+                placeholder="ምርቶችን ይፈልጉ... / Search products..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                autoFocus
+                className="search-input"
+              />
+              <button className="search-close" onClick={() => { setSearchOpen(false); setSearchQuery(''); }}>✕</button>
+            </div>
+            <div className="search-results">
+              {searchedProducts.length === 0 ? (
+                <p className="no-results-msg">No products found matching "{searchQuery}"</p>
+              ) : (
+                <div className="search-results-grid">
+                  {searchedProducts.map(p => (
+                    <div className="search-result-item" key={p.id} onClick={() => { setSearchOpen(false); setSearchQuery(''); }}>
+                      <img src={p.img} alt={p.name?.[locale] || t(p.nameKey)} />
+                      <div>
+                        <h4>{p.name?.[locale] || t(p.nameKey)}</h4>
+                        <span>{p.price} {t('product_currency')}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─── MOBILE MENU DRAWER ─── */}
+      {menuOpen && (
+        <div className="mobile-drawer fade-in">
+          <div className="mobile-drawer-backdrop" onClick={() => setMenuOpen(false)} />
+          <div className="mobile-drawer-content">
+            <div className="mobile-drawer-header">
+              <div className="logo">
+                <div className="logo-icon">🍛</div>
+                <div className="logo-text">
+                  <h2>የባህላዊ <span style={{ color: '#d4a017' }}>ጥፋቄ</span></h2>
+                </div>
+              </div>
+              <button className="mobile-drawer-close" onClick={() => setMenuOpen(false)}>✕</button>
+            </div>
+            <ul className="mobile-nav-links">
+              <li><a href="#home" onClick={() => setMenuOpen(false)}>{t('nav_home')}</a></li>
+              <li><a href="#products" onClick={() => setMenuOpen(false)}>{t('nav_products')}</a></li>
+              <li><a href="#about" onClick={() => setMenuOpen(false)}>{t('nav_about')}</a></li>
+              <li><a href="#contact" onClick={() => setMenuOpen(false)}>{t('nav_contact')}</a></li>
+              <li>
+                <a href="/admin" onClick={() => setMenuOpen(false)} style={{ color: 'var(--gold-500)', fontWeight: 'bold' }}>
+                  ⚙️ Admin Panel
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      )}
+
+      {/* ─── CART DRAWER ─── */}
+      {showCartDrawer && (
+        <div className="cart-drawer fade-in">
+          <div className="cart-drawer-backdrop" onClick={() => setShowCartDrawer(false)} />
+          <div className="cart-drawer-content">
+            <div className="cart-drawer-header">
+              <h3>🛒 {t('cart_title') || 'Your Cart'}</h3>
+              <button className="cart-drawer-close" onClick={() => setShowCartDrawer(false)}>✕</button>
+            </div>
+            <div className="cart-drawer-items">
+              {cart.length === 0 ? (
+                <div className="empty-cart-message" style={{ textAlign: 'center', padding: '40px 0' }}>
+                  <p>{t('cart_empty') || 'Your cart is empty'}</p>
+                  <button className="btn-primary" style={{ marginTop: '12px' }} onClick={() => setShowCartDrawer(false)}>
+                    {t('hero_shop')}
+                  </button>
+                </div>
+              ) : (
+                cart.map((item) => (
+                  <div className="cart-item-row" key={item.id} style={{ display: 'flex', gap: '12px', padding: '12px 0', borderBottom: '1px solid rgba(255,255,255,0.1)', alignItems: 'center' }}>
+                    <img src={item.img} alt={item.name?.[locale] || t(item.nameKey)} style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '4px' }} />
+                    <div style={{ flex: 1 }}>
+                      <h4 style={{ fontSize: '14px', color: '#fff' }}>{item.name?.[locale] || t(item.nameKey)}</h4>
+                      <div style={{ fontSize: '12px', color: 'var(--gold-300)', display: 'flex', gap: '10px', marginTop: '4px' }}>
+                        <span>{item.price} {t('product_currency')}</span>
+                        <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                          <button onClick={() => updateCartQty(item.id, -1)} style={{ background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', cursor: 'pointer', padding: '0 4.2px' }}>-</button>
+                          <span>{item.quantity}</span>
+                          <button onClick={() => updateCartQty(item.id, 1)} style={{ background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', cursor: 'pointer', padding: '0 4.2px' }}>+</button>
+                        </div>
+                      </div>
+                    </div>
+                    <button onClick={() => removeFromCart(item.id)} style={{ background: 'none', border: 'none', color: 'var(--red-600)', cursor: 'pointer', fontSize: '16px' }}>✕</button>
+                  </div>
+                ))
+              )}
+            </div>
+            {cart.length > 0 && (
+              <div className="cart-drawer-footer" style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '16px', marginTop: 'auto' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+                  <span>Total:</span>
+                  <span style={{ fontWeight: 'bold', color: 'var(--gold-400)' }}>
+                    {cart.reduce((total, item) => total + item.price * item.quantity, 0)} {t('product_currency')}
+                  </span>
+                </div>
+                <button className="btn-primary" style={{ width: '100%', justifyContent: 'center' }} onClick={() => alert('Order Placed Successfully! Mock Checkout Complete.')}>
+                  💳 Proceed to Checkout
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ─── TOAST NOTIFICATION ─── */}
+      {toastMessage && (
+        <div className="toast-notification fade-in">
+          <span>✨ {toastMessage}</span>
+        </div>
+      )}
     </div>
   );
 }
+

@@ -80,6 +80,19 @@ export const translations: Record<Locale, Record<string, string>> = {
     footer_contact: 'አግኙን',
     footer_copyright: '© 2024 የባህላዊ ጥፋቄ. ሁሉም መብቶች ስለ ተብቆ ናቸው።',
   },
+  // Admin UI translations
+  admin_login: 'Admin Login',
+  admin_dashboard: 'Admin Dashboard',
+  admin_total: 'Total Products',
+  admin_delete: 'Delete',
+  admin_avg_price: 'Avg Price',
+  admin_img: 'Img',
+  admin_name: 'Name',
+  admin_price: 'Price',
+  admin_actions: 'Actions',
+  admin_add_product: 'Add New Product',
+  admin_add: 'Add Product',
+
   de: {
     topbar_badge: '100% natürlich, hergestellt in Äthiopien',
     topbar_phone: '+251 9XX XXX XXX',
