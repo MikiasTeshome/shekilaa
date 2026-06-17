@@ -9,7 +9,7 @@ export default function AdminPage() {
   const [password, setPassword] = useState('');
   const [products, setProducts] = useState([] as any[]);
   const [newProduct, setNewProduct] = useState({
-    name: { am: '', de: '', en: '' },
+    name: { am: '', de: '', en: '', ti: '' },
     price: 0,
     weight: '',
     unit: '',
@@ -17,8 +17,9 @@ export default function AdminPage() {
     tagKey: '',
     category: 'spices',
   });
+  const [uploading, setUploading] = useState(false);
   const { locale } = useLocale();
-  const t = (key) => translations[locale]?.[key] || key;
+  const t = (key: string) => translations[locale]?.[key] || key;
 
   // fetch products once unlocked
   useEffect(() => {
@@ -28,6 +29,32 @@ export default function AdminPage() {
         .then(setProducts);
     }
   }, [unlocked]);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('password', password);
+
+    setUploading(true);
+    try {
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+      if (!res.ok) {
+        throw new Error(await res.text() || 'Failed to upload image');
+      }
+      const data = await res.json();
+      setNewProduct((prev) => ({ ...prev, img: data.url }));
+    } catch (err: any) {
+      alert(`Upload error: ${err.message}`);
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const handleUnlock = async () => {
     const expectedPassword = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || 'admin123';
@@ -78,7 +105,7 @@ export default function AdminPage() {
       const refreshed = await fetch('/api/products').then((r) => r.json());
       setProducts(refreshed);
       setNewProduct({
-        name: { am: '', de: '', en: '' },
+        name: { am: '', de: '', en: '', ti: '' },
         price: 0,
         weight: '',
         unit: '',
@@ -113,32 +140,35 @@ export default function AdminPage() {
 
   if (!unlocked) {
     return (
-      <div className="admin-lock-screen">
-        <h2>{t('admin_login')}</h2>
-        <input
-          type="password"
-          placeholder="Enter admin password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="admin-password-input"
-          onKeyDown={(e) => { if (e.key === 'Enter') handleUnlock(); }}
-        />
-        <button onClick={handleUnlock} className="admin-unlock-btn">
-          Unlock
-        </button>
-        <a href="/" style={{ color: 'rgba(255,255,255,0.6)', textDecoration: 'none', fontSize: '14px', marginTop: '10px' }}>
-          Cancel and return to store
-        </a>
+      <div className="container" style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem 24px' }}>
+        <div className="admin-lock-screen">
+          <h2>{t('admin_login')}</h2>
+          <input
+            type="password"
+            placeholder="Enter admin password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="admin-password-input"
+            onKeyDown={(e) => { if (e.key === 'Enter') handleUnlock(); }}
+          />
+          <button onClick={handleUnlock} className="admin-unlock-btn">
+            Unlock
+          </button>
+          <a href="/" style={{ color: 'rgba(255,255,255,0.6)', textDecoration: 'none', fontSize: '14px', marginTop: '10px' }}>
+            Cancel and return to shop
+          </a>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="admin-dashboard">
+    <div className="container" style={{ padding: '2rem 24px' }}>
+      <div className="admin-dashboard">
       <div className="admin-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
         <h1 style={{ margin: 0 }}>{t('admin_dashboard')}</h1>
         <a href="/" className="admin-unlock-btn" style={{ textDecoration: 'none', background: 'rgba(255, 255, 255, 0.15)', border: '1px solid rgba(255,255,255,0.2)' }}>
-          ← Back to Store
+          ← Back to Shop
         </a>
       </div>
 
@@ -229,6 +259,15 @@ export default function AdminPage() {
             />
           </div>
           <div>
+            <label style={{ display: 'block', fontSize: '12px', color: 'var(--gold-400)', marginBottom: '4px' }}>Tigrinya Name</label>
+            <input
+              placeholder="ዝተሓጨ በርበረ"
+              value={newProduct.name.ti}
+              onChange={(e) => setNewProduct({ ...newProduct, name: { ...newProduct.name, ti: e.target.value } })}
+              style={{ width: '100%' }}
+            />
+          </div>
+          <div>
             <label style={{ display: 'block', fontSize: '12px', color: 'var(--gold-400)', marginBottom: '4px' }}>Price (ETB)</label>
             <input
               type="number"
@@ -271,23 +310,35 @@ export default function AdminPage() {
             </select>
           </div>
           <div>
-            <label style={{ display: 'block', fontSize: '12px', color: 'var(--gold-400)', marginBottom: '4px' }}>Preset Image</label>
-            <select
-              value={newProduct.img}
-              onChange={(e) => setNewProduct({ ...newProduct, img: e.target.value })}
-              style={{ width: '100%' }}
-            >
-              <option value="/images/berbere.png">Berbere Presets</option>
-              <option value="/images/mitmita.png">Mitmita Presets</option>
-              <option value="/images/shiro.png">Shiro Presets</option>
-              <option value="/images/beso.png">Beso Presets</option>
-            </select>
+            <label style={{ display: 'block', fontSize: '12px', color: 'var(--gold-400)', marginBottom: '4px' }}>Product Image</label>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                style={{ width: '100%', fontSize: '12.5px' }}
+              />
+              <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', textAlign: 'center' }}>
+                — or use preset —
+              </span>
+              <select
+                value={newProduct.img}
+                onChange={(e) => setNewProduct({ ...newProduct, img: e.target.value })}
+                style={{ width: '100%' }}
+              >
+                <option value="/images/berbere.png">Berbere Preset</option>
+                <option value="/images/mitmita.png">Mitmita Preset</option>
+                <option value="/images/shiro.png">Shiro Preset</option>
+                <option value="/images/beso.png">Beso Preset</option>
+              </select>
+            </div>
           </div>
         </div>
-        <button onClick={handleAddProduct} className="admin-add-btn" style={{ marginTop: '1rem', width: '100%' }}>
-          {t('admin_add')}
+        <button onClick={handleAddProduct} className="admin-add-btn" style={{ marginTop: '1.5rem', width: '100%' }} disabled={uploading}>
+          {uploading ? 'Uploading image...' : t('admin_add')}
         </button>
       </section>
     </div>
+  </div>
   );
 }

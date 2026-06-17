@@ -1,11 +1,12 @@
 /* Admin Dashboard Styles */
 .admin-dashboard {
-  padding: 2rem;
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(10px);
-  border-radius: 1rem;
-  box-shadow: 0 8px 32px 0 rgba(31,38,135,0.37);
+  padding: 2.5rem;
+  background: linear-gradient(135deg, #0d230d 0%, #15391c 100%);
+  border: 1px solid rgba(212, 160, 23, 0.25);
+  border-radius: 1.2rem;
+  box-shadow: var(--shadow-xl);
   color: #fff;
+  margin: 1rem 0;
 }
 
 .admin-lock-screen {
@@ -13,52 +14,85 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 80vh;
-  background: linear-gradient(135deg, hsl(170,30%,15%), hsl(210,30%,20%));
-  border-radius: 1rem;
-  backdrop-filter: blur(8px);
+  width: 100%;
+  max-width: 480px;
+  background: linear-gradient(135deg, #0d230d 0%, #15391c 100%);
+  border: 1px solid rgba(212, 160, 23, 0.3);
+  border-radius: 1.2rem;
+  box-shadow: var(--shadow-xl);
   color: #fff;
-  gap: 1rem;
+  gap: 1.5rem;
+  padding: 3rem 2rem;
 }
 
 .admin-password-input,
 .price-input {
-  background: rgba(255,255,255,0.2);
-  border: none;
-  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 0.7rem 1.2rem;
   border-radius: 0.5rem;
   color: #fff;
   outline: none;
+  font-family: inherit;
+  transition: all 0.3s ease;
+}
+
+.admin-password-input:focus,
+.price-input:focus {
+  border-color: var(--gold-500);
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 10px rgba(212, 160, 23, 0.25);
 }
 
 .admin-unlock-btn,
-.admin-add-btn,
-.admin-delete-btn {
-  background: hsla(210,60%,55%,0.7);
+.admin-add-btn {
+  background: var(--gold-500);
+  color: var(--green-900);
   border: none;
-  color: #fff;
-  padding: 0.6rem 1.2rem;
+  font-weight: 700;
+  padding: 0.7rem 1.5rem;
   border-radius: 0.5rem;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(212, 160, 23, 0.2);
 }
 
 .admin-unlock-btn:hover,
-.admin-add-btn:hover,
+.admin-add-btn:hover {
+  background: var(--gold-400);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(212, 160, 23, 0.3);
+}
+
+.admin-delete-btn {
+  background: rgba(220, 53, 69, 0.2);
+  border: 1px solid rgba(220, 53, 69, 0.4);
+  color: #ff808b;
+  padding: 0.5rem 1rem;
+  border-radius: 0.4rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
 .admin-delete-btn:hover {
-  background: hsla(210,60%,55%,0.9);
+  background: rgba(220, 53, 69, 0.8);
+  color: #fff;
+  border-color: transparent;
 }
 
 .admin-stats {
   display: flex;
-  gap: 2rem;
-  margin-bottom: 2rem;
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+  flex-wrap: wrap;
 }
 
 .stat-card {
   flex: 1;
-  background: rgba(255,255,255,0.2);
-  padding: 1rem;
+  min-width: 200px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 1.5rem;
   border-radius: 0.8rem;
   text-align: center;
   backdrop-filter: blur(5px);

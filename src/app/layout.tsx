@@ -2,9 +2,9 @@ import './globals.css';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'የባህላዊ ጥፋቄ | Habesha Market - Authentic Ethiopian Foods & Spices',
-  description: 'Shop premium Ethiopian spices, berbere, mitmita, shiro, and traditional foods. Delivered fresh from Ethiopia to your doorstep. 100% authentic, natural ingredients.',
-  keywords: 'Ethiopian food, berbere, mitmita, shiro, Ethiopian spices, habesha market, Ethiopian grocery',
+  title: 'መቅደስ ባልትና | Mekedes Baltina - Authentic Ethiopian Foods & Spices',
+  description: 'Mekedes Baltina (መቅደስ ባልትና) - Shop premium Ethiopian spices, berbere, mitmita, shiro, and traditional foods. Delivered fresh from Ethiopia to your doorstep. 100% authentic, natural ingredients.',
+  keywords: 'Ethiopian food, berbere, mitmita, shiro, Ethiopian spices, mekedes baltina, መቅደስ ባልትና, mekedes.shop, Ethiopian grocery',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
