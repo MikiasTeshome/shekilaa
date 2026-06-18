@@ -8,10 +8,17 @@ export const localeNames: Record<Locale, string> = {
 };
 
 export const localeFlags: Record<Locale, string> = {
-  am: '🇪🇹',
-  de: '🇩🇪',
-  en: '🇬🇧',
-  ti: '🇪🇷',
+  am: 'et',
+  de: 'de',
+  en: 'gb',
+  ti: 'er',
+};
+
+export const localeCodes: Record<Locale, string> = {
+  am: 'AM',
+  de: 'DE',
+  en: 'EN',
+  ti: 'TI',
 };
 
 export const translations: Record<string, any> = {
