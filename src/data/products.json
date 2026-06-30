@@ -8,7 +8,7 @@
       "ti": "ዝተሓጨ በርበረ"
     },
     "nameKey": "product_berbere",
-    "price": 360,
+    "price": 3.00,
     "weight": "500ግ",
     "unit": "1ኪ.ግ",
     "img": "/images/berbere.png",
@@ -24,7 +24,7 @@
       "ti": "ዝተሓጨ ሚጥሚጣ"
     },
     "nameKey": "product_mitmita",
-    "price": 550,
+    "price": 4.50,
     "weight": "500ግ",
     "unit": "1ኪ.ግ",
     "img": "/images/mitmita.png",
@@ -40,7 +40,7 @@
       "ti": "ሽሮ"
     },
     "nameKey": "product_shiro",
-    "price": 350,
+    "price": 3.00,
     "weight": "",
     "unit": "1ኪ.ግ",
     "img": "/images/shiro.png",
@@ -56,7 +56,7 @@
       "ti": "በሶ"
     },
     "nameKey": "product_beso",
-    "price": 300,
+    "price": 2.50,
     "weight": "",
     "unit": "1ኪ.ግ",
     "img": "/images/beso.png",
@@ -70,7 +70,7 @@
       "en": "Special Berbere",
       "ti": "ፍሉይ ዝተሓጨ በርበረ"
     },
-    "price": 480,
+    "price": 4.00,
     "weight": "500g",
     "unit": "1kg",
     "img": "/images/berbere.png",
@@ -85,7 +85,7 @@
       "en": "Test Spice",
       "ti": ""
     },
-    "price": 100,
+    "price": 1.00,
     "weight": "",
     "unit": "",
     "img": "/images/berbere.png",

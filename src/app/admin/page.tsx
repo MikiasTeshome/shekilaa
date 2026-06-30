@@ -179,8 +179,7 @@ export default function AdminPage() {
         </div>
         <div className="stat-card">
           <div className="stat-value">
-            {products.length ? Math.round(products.reduce((sum, p) => sum + (p.price || 0), 0) / products.length) : 0} ETB
-            {products.length ? ` (~${(products.reduce((sum, p) => sum + (p.price || 0), 0) / products.length / 120).toFixed(2)} €)` : ''}
+            {products.length ? (products.reduce((sum, p) => sum + (p.price || 0), 0) / products.length).toFixed(2) : '0.00'} €
           </div>
           <div className="stat-label">{t('admin_avg_price')}</div>
         </div>
@@ -207,6 +206,7 @@ export default function AdminPage() {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <input
                       type="number"
+                      step="0.01"
                       defaultValue={p.price}
                       onBlur={(e) => {
                         const newPrice = Number(e.target.value);
@@ -215,7 +215,7 @@ export default function AdminPage() {
                       className="price-input"
                       style={{ width: '80px' }}
                     />
-                    <span>ETB (~{(p.price / 120).toFixed(2)} €)</span>
+                    <span>€</span>
                   </div>
                 </td>
                 <td>
@@ -269,19 +269,15 @@ export default function AdminPage() {
             />
           </div>
           <div>
-            <label style={{ display: 'block', fontSize: '12px', color: 'var(--gold-400)', marginBottom: '4px' }}>Price (ETB)</label>
+            <label style={{ display: 'block', fontSize: '12px', color: 'var(--gold-400)', marginBottom: '4px' }}>Price (€)</label>
             <input
               type="number"
-              placeholder="450"
+              step="0.01"
+              placeholder="3.50"
               value={newProduct.price || ''}
               onChange={(e) => setNewProduct({ ...newProduct, price: Number(e.target.value) })}
               style={{ width: '100%' }}
             />
-            {newProduct.price > 0 && (
-              <span style={{ fontSize: '12px', color: 'var(--gray-400)', marginTop: '4px', display: 'block' }}>
-                ~{(newProduct.price / 120).toFixed(2)} €
-              </span>
-            )}
           </div>
           <div>
             <label style={{ display: 'block', fontSize: '12px', color: 'var(--gold-400)', marginBottom: '4px' }}>Weight (e.g. 500ግ)</label>

@@ -6,11 +6,8 @@ import { useLocale } from './hooks/useLocale';
 function useTranslation() {
   const { locale, setLocale } = useLocale();
   const t = (key: string) => translations[locale]?.[key] || translations['am'][key] || key;
-  const formatPrice = (priceETB: number) => {
-    if (locale === 'de' || locale === 'en') {
-      return (priceETB / 120).toFixed(2);
-    }
-    return priceETB;
+  const formatPrice = (price: number) => {
+    return price.toFixed(2);
   };
   return { locale, setLocale, t, formatPrice };
 }
@@ -52,19 +49,19 @@ export default function Page() {
         } else {
           // Fallback static list
           setProducts([
-            { id: 1, nameKey: 'product_berbere', price: 450, weight: '500ግ', unit: '1ኪ.ግ', img: '/images/berbere.png', tagKey: 'product_popular', category: 'spices' },
-            { id: 2, nameKey: 'product_mitmita', price: 550, weight: '500ግ', unit: '1ኪ.ግ', img: '/images/mitmita.png', tagKey: '', category: 'spices' },
-            { id: 3, nameKey: 'product_shiro', price: 350, weight: '', unit: '1ኪ.ግ', img: '/images/shiro.png', tagKey: '', category: 'traditional' },
-            { id: 4, nameKey: 'product_beso', price: 300, weight: '', unit: '1ኪ.ግ', img: '/images/beso.png', tagKey: 'product_new', category: 'grains' },
+            { id: 1, nameKey: 'product_berbere', price: 3.00, weight: '500ግ', unit: '1ኪ.ግ', img: '/images/berbere.png', tagKey: 'product_popular', category: 'spices' },
+            { id: 2, nameKey: 'product_mitmita', price: 4.50, weight: '500ግ', unit: '1ኪ.ግ', img: '/images/mitmita.png', tagKey: '', category: 'spices' },
+            { id: 3, nameKey: 'product_shiro', price: 3.00, weight: '', unit: '1ኪ.ግ', img: '/images/shiro.png', tagKey: '', category: 'traditional' },
+            { id: 4, nameKey: 'product_beso', price: 2.50, weight: '', unit: '1ኪ.ግ', img: '/images/beso.png', tagKey: 'product_new', category: 'grains' },
           ]);
         }
       })
       .catch(() => {
         setProducts([
-          { id: 1, nameKey: 'product_berbere', price: 450, weight: '500ግ', unit: '1ኪ.ግ', img: '/images/berbere.png', tagKey: 'product_popular', category: 'spices' },
-          { id: 2, nameKey: 'product_mitmita', price: 550, weight: '500ግ', unit: '1ኪ.ግ', img: '/images/mitmita.png', tagKey: '', category: 'spices' },
-          { id: 3, nameKey: 'product_shiro', price: 350, weight: '', unit: '1ኪ.ግ', img: '/images/shiro.png', tagKey: '', category: 'traditional' },
-          { id: 4, nameKey: 'product_beso', price: 300, weight: '', unit: '1ኪ.ግ', img: '/images/beso.png', tagKey: 'product_new', category: 'grains' },
+          { id: 1, nameKey: 'product_berbere', price: 3.00, weight: '500ግ', unit: '1ኪ.ግ', img: '/images/berbere.png', tagKey: 'product_popular', category: 'spices' },
+          { id: 2, nameKey: 'product_mitmita', price: 4.50, weight: '500ግ', unit: '1ኪ.ግ', img: '/images/mitmita.png', tagKey: '', category: 'spices' },
+          { id: 3, nameKey: 'product_shiro', price: 3.00, weight: '', unit: '1ኪ.ግ', img: '/images/shiro.png', tagKey: '', category: 'traditional' },
+          { id: 4, nameKey: 'product_beso', price: 2.50, weight: '', unit: '1ኪ.ግ', img: '/images/beso.png', tagKey: 'product_new', category: 'grains' },
         ]);
       });
   }, []);
