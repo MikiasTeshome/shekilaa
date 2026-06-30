@@ -6,11 +6,17 @@ import { useLocale } from './hooks/useLocale';
 function useTranslation() {
   const { locale, setLocale } = useLocale();
   const t = (key: string) => translations[locale]?.[key] || translations['am'][key] || key;
-  return { locale, setLocale, t };
+  const formatPrice = (priceETB: number) => {
+    if (locale === 'de' || locale === 'en') {
+      return (priceETB / 120).toFixed(2);
+    }
+    return priceETB;
+  };
+  return { locale, setLocale, t, formatPrice };
 }
 
 export default function Page() {
-  const { locale, setLocale, t } = useTranslation();
+  const { locale, setLocale, t, formatPrice } = useTranslation();
   const [langOpen, setLangOpen] = useState(false);
   const langRef = useRef<HTMLDivElement>(null);
 
@@ -429,7 +435,7 @@ export default function Page() {
                   </div>
                   <div className="product-bottom">
                     <div className="product-price">
-                      {p.price} <span>{t('product_currency')}</span>
+                      {formatPrice(p.price)} <span>{t('product_currency')}</span>
                     </div>
                     <button className="btn-cart" onClick={() => addToCart(p)}>
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
@@ -620,7 +626,7 @@ export default function Page() {
                       <img src={p.img} alt={p.name?.[locale] || t(p.nameKey)} />
                       <div>
                         <h4>{p.name?.[locale] || t(p.nameKey)}</h4>
-                        <span>{p.price} {t('product_currency')}</span>
+                        <span>{formatPrice(p.price)} {t('product_currency')}</span>
                       </div>
                     </div>
                   ))}
@@ -684,7 +690,7 @@ export default function Page() {
                     <div style={{ flex: 1 }}>
                       <h4 style={{ fontSize: '14px', color: '#fff' }}>{item.name?.[locale] || t(item.nameKey)}</h4>
                       <div style={{ fontSize: '12px', color: 'var(--gold-300)', display: 'flex', gap: '10px', marginTop: '4px' }}>
-                        <span>{item.price} {t('product_currency')}</span>
+                        <span>{formatPrice(item.price)} {t('product_currency')}</span>
                         <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
                           <button onClick={() => updateCartQty(item.id, -1)} style={{ background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', cursor: 'pointer', padding: '0 4.2px' }}>-</button>
                           <span>{item.quantity}</span>
@@ -702,7 +708,7 @@ export default function Page() {
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
                   <span>Total:</span>
                   <span style={{ fontWeight: 'bold', color: 'var(--gold-400)' }}>
-                    {cart.reduce((total, item) => total + item.price * item.quantity, 0)} {t('product_currency')}
+                    {formatPrice(cart.reduce((total, item) => total + item.price * item.quantity, 0))} {t('product_currency')}
                   </span>
                 </div>
                 <button className="btn-primary" style={{ width: '100%', justifyContent: 'center' }} onClick={() => alert('Order Placed Successfully! Mock Checkout Complete.')}>

@@ -180,6 +180,7 @@ export default function AdminPage() {
         <div className="stat-card">
           <div className="stat-value">
             {products.length ? Math.round(products.reduce((sum, p) => sum + (p.price || 0), 0) / products.length) : 0} ETB
+            {products.length ? ` (~${(products.reduce((sum, p) => sum + (p.price || 0), 0) / products.length / 120).toFixed(2)} €)` : ''}
           </div>
           <div className="stat-label">{t('admin_avg_price')}</div>
         </div>
@@ -214,7 +215,7 @@ export default function AdminPage() {
                       className="price-input"
                       style={{ width: '80px' }}
                     />
-                    <span>ETB</span>
+                    <span>ETB (~{(p.price / 120).toFixed(2)} €)</span>
                   </div>
                 </td>
                 <td>
@@ -276,6 +277,11 @@ export default function AdminPage() {
               onChange={(e) => setNewProduct({ ...newProduct, price: Number(e.target.value) })}
               style={{ width: '100%' }}
             />
+            {newProduct.price > 0 && (
+              <span style={{ fontSize: '12px', color: 'var(--gray-400)', marginTop: '4px', display: 'block' }}>
+                ~{(newProduct.price / 120).toFixed(2)} €
+              </span>
+            )}
           </div>
           <div>
             <label style={{ display: 'block', fontSize: '12px', color: 'var(--gold-400)', marginBottom: '4px' }}>Weight (e.g. 500ግ)</label>
